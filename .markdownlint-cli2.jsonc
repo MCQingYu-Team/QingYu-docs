@@ -1,0 +1,4 @@
+{
+  "config": ".markdownlint.json",
+  "ignores": ["node_modules/**", "site/**", ".venv/**", ".git/**"]
+}

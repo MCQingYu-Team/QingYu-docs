@@ -1,0 +1,38 @@
+name: 文档改进建议
+description: 提出规则文档站、仓库工具或协作流程的改进建议
+title: "[建议] "
+labels:
+  - 建议
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: 涉及范围
+      options:
+        - 文档站（导航、样式、搜索）
+        - 仓库工具（检查脚本、工作流）
+        - 规则写法与结构
+        - 省流版内容
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你遇到的问题
+      description: 说明当前的做法为什么让你觉得不方便
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 你的建议
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 补充说明
+      description: 截图、参考链接等
+    validations:
+      required: false

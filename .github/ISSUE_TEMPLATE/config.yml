@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 入服绑定与白名单
+    url: https://qm.qq.com/q/KvtrTgdMw8
+    about: 绑定码、白名单、账号问题请直接加官方 QQ 群（1102137231）联系值班管理员
+  - name: 服务器规则速查
+    url: https://mcqingyu-team.github.io/QingYu-docs/
+    about: 先看文档站的省流版，大部分问题在那里已有答案

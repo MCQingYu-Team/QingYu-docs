@@ -1,0 +1,40 @@
+/* 清屿服务器规则文档站 · 自定义样式
+   深蓝黑底 + 青色强调，长表格横向可滚动，条款编号等宽显示 */
+
+:root {
+  --qy-accent: #22d3ee;
+  --qy-surface: #0f172a;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: var(--qy-surface);
+  --md-accent-fg-color: var(--qy-accent);
+}
+
+/* 正文表格：允许横向滚动，避免七类处罚细目在大屏之外溢出 */
+.md-typeset table:not([class]) {
+  display: block;
+  overflow-x: auto;
+  font-size: 0.72rem;
+}
+
+.md-typeset table:not([class]) th {
+  white-space: nowrap;
+}
+
+/* 条款编号（如 L-003、8.1.1）与行内代码统一等宽 */
+.md-typeset code {
+  font-size: 0.82em;
+  white-space: nowrap;
+}
+
+/* 头部版本信息块引用弱化边框、强化左色条 */
+.md-typeset blockquote {
+  border-left: 3px solid var(--qy-accent);
+  background: rgba(34, 211, 238, 0.06);
+}
+
+/* 一级标题与页脚间距 */
+.md-typeset h1 {
+  margin-bottom: 0.8em;
+}

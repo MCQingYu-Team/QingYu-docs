@@ -1,0 +1,17 @@
+{
+  "name": "qingyu-rules",
+  "version": "1.0.0",
+  "private": true,
+  "description": "清屿服务器官方规则文档仓库",
+  "license": "SEE LICENSE IN LICENSE",
+  "scripts": {
+    "lint": "markdownlint-cli2 \"**/*.md\"",
+    "check": "node scripts/check-references.mjs",
+    "verify": "npm run lint && npm run check",
+    "docs:build": "mkdocs build --strict",
+    "docs:serve": "mkdocs serve"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.23.2"
+  }
+}

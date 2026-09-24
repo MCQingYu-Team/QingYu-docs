@@ -1,0 +1,28 @@
+name: Docs Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "规则/**"
+      - "mkdocs.yml"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 安装 MkDocs Material
+        run: pip install mkdocs-material
+      - name: 构建并发布到 GitHub Pages
+        run: mkdocs gh-deploy --force

@@ -1,0 +1,56 @@
+name: 规则问题反馈
+description: 报告规则文档中的错误、歧义，或与服务器实际执行不一致之处
+title: "[规则问题] "
+labels:
+  - 规则问题
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你帮忙改进规则。请尽量写清楚位置与原文，便于我们定位。
+
+        > 涉及个人纠纷、处罚申诉、账号找回的，请走官方 QQ 群（1102137231）私聊值班管理员，不要在此公开讨论他人信息。
+  - type: input
+    id: doc
+    attributes:
+      label: 涉及的文档与条款
+      description: 例如：玩家守则 8.4.1、管理员条例 第十二条、处罚细目 L-003
+      placeholder: 玩家守则 8.4.1
+    validations:
+      required: true
+  - type: textarea
+    id: quote
+    attributes:
+      label: 原文内容
+      description: 请粘贴存在问题的原文片段
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 问题类型
+      options:
+        - 表述歧义，容易产生不同理解
+        - 与服务器实际执行不一致
+        - 条款之间存在冲突
+        - 错别字或格式问题
+        - 编号引用错误（链接、条款编号指向错误）
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 你的建议
+      description: 如果方便，请给出修改后的表述
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      options:
+        - label: 我已阅读仓库中的《玩家守则》与《管理员条例》
+          required: true
+        - label: 本反馈不涉及他人隐私信息
+          required: true
