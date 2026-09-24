@@ -8,8 +8,8 @@
     "lint": "markdownlint-cli2 \"**/*.md\"",
     "check": "node scripts/check-references.mjs",
     "verify": "npm run lint && npm run check",
-    "docs:build": "mkdocs build --strict",
-    "docs:serve": "mkdocs serve"
+    "site:build": "node scripts/build-site.mjs",
+    "site:serve": "node scripts/serve-site.mjs"
   },
   "devDependencies": {
     "markdownlint-cli2": "^0.23.2"

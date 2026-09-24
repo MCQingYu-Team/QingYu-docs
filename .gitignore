@@ -1,6 +1,5 @@
 node_modules/
 site/
-.mkdocs-build/
 .DS_Store
 Thumbs.db
 *.log

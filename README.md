@@ -70,9 +70,11 @@
 ```text
 .
 ├── .github/              # CI 工作流、Issue / PR 模板
-├── scripts/              # 文档一致性检查器
-├── 规则/                 # 规则文档（mkdocs 的 docs_dir）
-│   ├── index.md          # 文档站首页
+├── scripts/              # 站点生成器、本地预览服务器、文档一致性检查器
+├── site-assets/          # 站点样式与脚本（site.css、site.js）
+├── 规则/                 # 规则文档（站点源文）
+│   ├── index.md          # 首页
+│   ├── 404.md            # 404 页面
 │   ├── 清屿服务器玩家守则.md
 │   ├── 清屿服务器管理员条例.md
 │   ├── 清屿服务器地铁乘车管理条例.md
@@ -82,8 +84,7 @@
 │   └── 处罚细目/         # 七大类处罚细目
 ├── 服务器信息.md
 ├── CHANGELOG.md
-├── CONTRIBUTING.md
-└── mkdocs.yml
+└── CONTRIBUTING.md
 ```
 
 ## 维护与贡献
@@ -91,7 +92,7 @@
 - **修订流程：** 见上方"七日阳光流程"章节，操作细则见 [CONTRIBUTING.md](CONTRIBUTING.md)
 - **更新记录：** 见 [CHANGELOG.md](CHANGELOG.md)
 - **版本与许可：** 文档版本号见各文件头部；仓库许可见 [LICENSE](LICENSE)
-- **本地校验：** `npm run verify`（markdownlint + 5 类一致性检查）、`npm run docs:serve`（本地预览文档站）
+- **本地校验：** `npm run verify`（markdownlint + 5 类一致性检查）、`npm run site:build`（生成静态站到 `site/`）、`npm run site:serve`（本地预览）
 
 ---
 
