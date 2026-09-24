@@ -10,11 +10,23 @@ theme:
   name: material
   language: zh
   palette:
-    scheme: slate
-    primary: indigo
-    accent: cyan
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: 当前为亮色模式，点击切换到暗色
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: 当前为暗色模式，点击切换到亮色
   features:
     - navigation.instant
+    - navigation.instant.progress
     - navigation.tracking
     - navigation.top
     - navigation.footer
@@ -22,6 +34,7 @@ theme:
     - search.highlight
     - toc.follow
     - content.code.copy
+    - content.tooltips
   icon:
     repo: fontawesome/brands/github
 
@@ -33,6 +46,8 @@ plugins:
 
 markdown_extensions:
   - admonition
+  - attr_list
+  - md_in_html
   - pymdownx.details
   - pymdownx.superfences:
       custom_fences:
@@ -47,14 +62,14 @@ extra_javascript:
   - https://unpkg.com/mermaid@10.9.1/dist/mermaid.min.js
 
 nav:
-  - 首页: index.md
-  - 玩家守则: 清屿服务器玩家守则.md
-  - 管理员条例: 清屿服务器管理员条例.md
-  - 地铁乘车管理条例: 清屿服务器地铁乘车管理条例.md
-  - 玩家身份与治理条例: 清屿服务器玩家身份与治理条例.md
-  - 七日阳光流程: 清屿服务器七日阳光流程.md
-  - 处罚细目表:
-      - 处罚细目表: 处罚细目表.md
+  - "🏠 首页": index.md
+  - "📜 玩家守则": 清屿服务器玩家守则.md
+  - "🛡️ 管理员条例": 清屿服务器管理员条例.md
+  - "🚇 地铁乘车管理条例": 清屿服务器地铁乘车管理条例.md
+  - "👤 玩家身份与治理条例": 清屿服务器玩家身份与治理条例.md
+  - "☀️ 七日阳光流程": 清屿服务器七日阳光流程.md
+  - "⚖️ 处罚细目表":
+      - "总览与使用方式": 处罚细目表.md
       - 语言类（L）: 处罚细目/01-语言类.md
       - 破坏类（P）: 处罚细目/02-破坏类.md
       - 作弊类（C）: 处罚细目/03-作弊类.md
@@ -69,3 +84,5 @@ extra:
     - icon: fontawesome/solid/comment
       link: https://qm.qq.com/q/KvtrTgdMw8
       name: 官方 QQ 群
+
+copyright: '© 清屿运营团队 ｜ 规则文档站由 GitHub Pages 自动部署 ｜ 修订须遵循「七日阳光流程」'
