@@ -3,7 +3,8 @@
  * 清屿服务器规则 · 静态站点生成器
  *
  * 零依赖（只用 Node 标准库）：把 Markdown 源文件编译成纯静态 HTML 站点，
- * 自带顶部菜单栏、左侧导航、页内目录、站内搜索、mermaid 渲染与亮暗切换。
+ * 界面形态对齐官网（www.aqcraft.cn）使用的 Forty 模板：固定顶栏 + 全部文档抽屉
+ * + 页内目录 + 站内搜索 + 首页卡片，深色单主题，mermaid 图按需加载。
  * 产物输出到 site/，可直接部署到任意静态托管。
  *
  * 用法：
@@ -51,6 +52,13 @@ const NAV = [
       '规则/处罚细目/07-群聊社区.md',
     ],
   },
+];
+
+/** 首页头图的入口按钮；带 href 的是站外链接 */
+const HOME_ACTIONS = [
+  { src: '规则/清屿服务器玩家守则.md', label: '读玩家守则', primary: true },
+  { src: '规则/处罚细目表.md', label: '看处罚细目表' },
+  { href: 'https://www.aqcraft.cn', label: '访问官网' },
 ];
 
 /** 不在导航里、但仍需生成的页面 */
@@ -350,70 +358,147 @@ const baseHref = (page) => {
   return depth === 0 ? '' : '../'.repeat(depth);
 };
 
-function shell(page) {
-  const base = baseHref(page);
-  const tabs = NAV.map((g) => {
-    const active = g.group === groupOf.get(page.src);
-    const first = pages.get(g.items[0]);
-    return `<a class="tab${active ? ' tab--active' : ''}" href="${relLink(page.out, first.out)}">${escapeHtml(g.group)}</a>`;
+const pagesByOut = new Map([...pages.values()].map((p) => [p.out, p]));
+
+/** 取文档首个普通段落，作为首页头图的导语 */
+function firstParagraph(source) {
+  return (
+    source
+      .replace(/\r\n/g, '\n')
+      .split('\n')
+      .map((l) => l.trim())
+      .find((l) => l && !/^(#{1,6}\s|>\s?|[-*+]\s|\||`|\d+\.\s)/.test(l)) || ''
+  );
+}
+
+/**
+ * 首页的「规则体系」表格换成套色卡片。表格仍是唯一数据源：
+ * 版本号由 scripts/check-references.mjs 与各文档头部核对。
+ */
+function homeTiles(html) {
+  const table = html.match(/<div class="table-wrap"><table>[\s\S]*?<\/table><\/div>/);
+  if (!table) return html;
+
+  const tbody = (table[0].match(/<tbody>([\s\S]*?)<\/tbody>/) || [])[1] || '';
+  const rows = [...tbody.matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map((row) =>
+    [...row[1].matchAll(/<td>([\s\S]*?)<\/td>/g)].map((cell) => cell[1]),
+  );
+
+  const tiles = rows
+    .map((cells, i) => {
+      const href = (cells[0].match(/href="([^"]+)"/) || [])[1] || '#';
+      const target = pagesByOut.get(href);
+      const title = target ? target.title : cells[0].replace(/<[^>]+>/g, '').replace(/\.md$/, '');
+      return `<article class="tile tile--c${(i % 6) + 1}">
+<h3><a href="${href}">${escapeHtml(title)}</a></h3>
+<p class="tile__meta">${cells[1] || ''} · ${cells[2] || ''}</p>
+<p class="tile__desc">${cells[3] || ''}</p>
+</article>`;
+    })
+    .join('\n');
+
+  return html.replace(table[0], `<div class="tiles">\n${tiles}\n</div>`);
+}
+
+/** 首页头图：标题 + 导语 + 主要入口按钮 */
+function homeHero(page) {
+  const actions = HOME_ACTIONS.map((a) => {
+    const href = a.href || relLink(page.out, pages.get(a.src).out);
+    const cls = `button${a.primary ? ' button--primary' : ''}`;
+    const ext = a.href ? ' target="_blank" rel="noopener"' : '';
+    return `<li><a class="${cls}" href="${href}"${ext}>${a.label}</a></li>`;
   }).join('');
 
-  const group = groupOf.get(page.src);
-  const sidebarItems = group
-    ? NAV.find((g) => g.group === group)
-        .items.map((src) => {
-          const p = pages.get(src);
-          const active = src === page.src;
-          return `<a class="side-link${active ? ' side-link--active' : ''}" href="${relLink(page.out, p.out)}">${escapeHtml(p.title)}</a>`;
-        })
-        .join('')
-    : '';
+  return `<div class="hero">
+  <div class="inner">
+    <h1>${escapeHtml(page.title)}</h1>
+    <p class="hero__lead">${inline(firstParagraph(page.source), makePageCtx(page))}</p>
+    <ul class="actions">${actions}</ul>
+  </div>
+</div>`;
+}
 
-  const toc = page.headings
+function shell(page) {
+  const base = baseHref(page);
+  const currentGroup = groupOf.get(page.src);
+  const isHome = page.src === '规则/index.md';
+
+  const tabs = NAV.map((g) => {
+    const active = g.group === currentGroup;
+    const first = pages.get(g.items[0]);
+    return `<a class="tab tab--group${active ? ' tab--active' : ''}" href="${relLink(page.out, first.out)}">${escapeHtml(g.group)}</a>`;
+  }).join('');
+
+  const menuGroups = NAV.map(
+    (g) => `    <div class="menu__group">
+      <h3 class="menu__title">${escapeHtml(g.group)}</h3>
+      <ul class="menu__links">${g.items
+        .map((src) => {
+          const p = pages.get(src);
+          const active = src === page.src ? ' class="is-active"' : '';
+          return `<li><a${active} href="${relLink(page.out, p.out)}">${escapeHtml(p.title)}</a></li>`;
+        })
+        .join('')}</ul>
+    </div>`,
+  ).join('\n');
+
+  const tocItems = page.headings
     .filter((h) => h.level >= 2 && h.level <= 3)
-    .map((h) => `<a class="toc-link toc-link--h${h.level}" href="#${h.id}">${h.label}</a>`)
+    .map(
+      (h) =>
+        `<li><a class="toc-link toc-link--h${h.level}" href="#${h.id}">${h.label}</a></li>`,
+    )
     .join('');
+
+  // 首页的 H1 由头图承担，正文里去掉，避免同一标题出现两次
+  let body = page.html;
+  if (isHome) {
+    body = homeTiles(body).replace(/<h1 [^>]*>[\s\S]*?<\/h1>/, '');
+  }
 
   const docTitle = page.title === SITE_NAME ? SITE_NAME : `${page.title} · ${SITE_NAME}`;
 
   return `<!doctype html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(docTitle)}</title>
 <meta name="description" content="${escapeHtml(SITE_DESC)}">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f172a'/%3E%3Cpath d='M8 22V10h4l4 6 4-6h4v12h-3v-7l-5 7-5-7v7z' fill='%2322d3ee'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23242943'/%3E%3Cpath d='M8 22V10h4l4 6 4-6h4v12h-3v-7l-5 7-5-7v7z' fill='%239bf1ff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="${base}assets/site.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,600,600italic&display=swap" media="print" onload="this.media='all'">
 </head>
 <body>
 <header class="topbar">
-  <button class="icon-btn" id="menu-btn" aria-label="打开导航">☰</button>
-  <a class="brand" href="${relLink(page.out, 'index.html')}">
-    <span class="brand__dot"></span>${SITE_NAME}
-  </a>
-  <nav class="tabs">${tabs}</nav>
-  <div class="topbar__actions">
-    <button class="icon-btn" id="search-btn" aria-label="搜索">搜索</button>
-    <button class="icon-btn" id="theme-btn" aria-label="切换主题">◐</button>
-    <a class="icon-btn" href="${REPO_URL}" target="_blank" rel="noopener" aria-label="GitHub 仓库">GitHub</a>
-  </div>
+  <a class="topbar__logo" href="${relLink(page.out, 'index.html')}"><strong>清屿</strong><span>服务器规则</span></a>
+  <nav class="topbar__nav">${tabs}
+    <button class="tab" id="search-btn" aria-label="站内搜索">搜索</button>
+    <button class="tab" id="menu-btn" aria-controls="menu" aria-label="全部文档">全部文档 ≡</button>
+  </nav>
 </header>
 
-<div class="layout">
-  <aside class="sidebar" id="sidebar">
-    ${sidebarItems ? `<nav class="sidebar__group"><div class="sidebar__title">${escapeHtml(group || '')}</div>${sidebarItems}</nav>` : ''}
-    ${toc ? `<nav class="sidebar__toc"><div class="sidebar__title">本页目录</div>${toc}</nav>` : ''}
-  </aside>
-
-  <main class="content">
-    <article class="md">${page.html}</article>
+<div class="wrapper">
+${isHome ? `${homeHero(page)}\n` : ''}  <div class="inner">
+${tocItems ? `    <details class="toc">\n      <summary class="toc__summary">本页目录</summary>\n      <ul class="toc__list">${tocItems}</ul>\n    </details>\n` : ''}    <article class="md">${body}</article>
     <footer class="page-footer">
-      <span>© 清屿运营团队</span>
-      <span>修订须遵循「七日阳光流程」</span>
-      <a href="${REPO_URL}/edit/${BRANCH}/${encodeURI(page.src)}" target="_blank" rel="noopener">在 GitHub 上编辑本页</a>
+      <span>© 清屿运营团队 · 修订须遵循「七日阳光流程」</span>
+      <ul class="footer-links">
+        <li><a href="https://www.aqcraft.cn" target="_blank" rel="noopener">官网</a></li>
+        <li><a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="${REPO_URL}/edit/${BRANCH}/${encodeURI(page.src)}" target="_blank" rel="noopener">编辑本页</a></li>
+      </ul>
     </footer>
-  </main>
+  </div>
+</div>
+
+<div class="menu" id="menu" role="dialog" aria-label="全部文档">
+  <div class="menu__inner">
+    <button class="menu__close" aria-label="关闭">✕</button>
+    <div class="menu__grid">
+${menuGroups}
+    </div>
+  </div>
 </div>
 
 <div class="search" id="search" hidden>
@@ -426,7 +511,7 @@ function shell(page) {
 <script src="${base}assets/search-index.js"></script>
 <script src="${base}assets/site.js"></script>
 ${page.hasMermaid ? `<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
-<script>window.mermaid && mermaid.initialize({ startOnLoad: true, theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default' });</script>` : ''}
+<script>window.mermaid && mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>` : ''}
 </body>
 </html>
 `;

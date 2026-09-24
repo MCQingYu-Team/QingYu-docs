@@ -1,41 +1,26 @@
 /* 清屿服务器规则 · 静态站交互
-   亮暗切换、移动端导航、站内搜索、页内目录高亮 */
+   全部文档抽屉、站内搜索、页内目录高亮 */
 (function () {
   'use strict';
 
-  var root = document.documentElement;
-
-  /* ---------- 主题 ---------- */
-  function applyTheme(theme) {
-    root.dataset.theme = theme;
-    try { localStorage.setItem('qy-theme', theme); } catch (e) {}
-  }
-
-  var saved = null;
-  try { saved = localStorage.getItem('qy-theme'); } catch (e) {}
-  if (saved === 'light' || saved === 'dark') {
-    applyTheme(saved);
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    applyTheme('light');
-  }
-
-  var themeBtn = document.getElementById('theme-btn');
-  if (themeBtn) {
-    themeBtn.addEventListener('click', function () {
-      applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
-    });
-  }
-
-  /* ---------- 移动端导航 ---------- */
+  /* ---------- 全部文档抽屉 ---------- */
+  var menu = document.getElementById('menu');
   var menuBtn = document.getElementById('menu-btn');
-  if (menuBtn) {
-    menuBtn.addEventListener('click', function () {
-      document.body.classList.toggle('nav-open');
-    });
-    document.addEventListener('click', function (e) {
-      if (!document.body.classList.contains('nav-open')) return;
-      if (e.target.closest('.sidebar') || e.target.closest('#menu-btn')) return;
-      document.body.classList.remove('nav-open');
+
+  function openMenu() {
+    if (menu) menu.classList.add('menu--open');
+  }
+
+  function closeMenu() {
+    if (menu) menu.classList.remove('menu--open');
+  }
+
+  if (menuBtn) menuBtn.addEventListener('click', openMenu);
+
+  if (menu) {
+    menu.addEventListener('click', function (e) {
+      // 面板外的区域与关闭按钮都收起抽屉
+      if (e.target === menu || e.target.closest('.menu__close')) closeMenu();
     });
   }
 
@@ -49,6 +34,7 @@
 
   function openSearch() {
     if (!overlay) return;
+    closeMenu();
     overlay.hidden = false;
     input.value = '';
     render('');
@@ -58,6 +44,14 @@
   function closeSearch() {
     if (!overlay) return;
     overlay.hidden = true;
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   function render(query) {
@@ -84,21 +78,20 @@
     results.innerHTML = hits
       .map(function (e, i) {
         return (
-          '<a class="search__hit' + (i === 0 ? ' search__hit--active' : '') + '" href="' + e.u + '">' +
-          '<b>' + escapeHtml(e.h) + '</b>' +
-          '<small>' + escapeHtml(e.t) + ' · ' + escapeHtml(e.s.slice(0, 90)) + '</small>' +
-          '</a>'
+          '<a class="search__hit' +
+          (i === 0 ? ' search__hit--active' : '') +
+          '" href="' +
+          e.u +
+          '"><b>' +
+          escapeHtml(e.h) +
+          '</b><small>' +
+          escapeHtml(e.t) +
+          ' · ' +
+          escapeHtml(e.s.slice(0, 90)) +
+          '</small></a>'
         );
       })
       .join('');
-  }
-
-  function escapeHtml(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
   }
 
   function move(delta) {
@@ -119,16 +112,27 @@
     });
   }
   if (input) {
-    input.addEventListener('input', function () { render(input.value); });
+    input.addEventListener('input', function () {
+      render(input.value);
+    });
     input.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
-      else if (e.key === 'Enter' && hits[cursor]) { window.location.href = hits[cursor].u; }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        move(1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        move(-1);
+      } else if (e.key === 'Enter' && hits[cursor]) {
+        window.location.href = hits[cursor].u;
+      }
     });
   }
 
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeSearch();
+    if (e.key === 'Escape') {
+      closeSearch();
+      closeMenu();
+    }
     var typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
     if (!typing && (e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'))) {
       e.preventDefault();
@@ -155,7 +159,7 @@
           current = link;
         });
       },
-      { rootMargin: '-80px 0px -70% 0px' }
+      { rootMargin: '-80px 0px -70% 0px' },
     );
     Object.keys(map).forEach(function (id) {
       var el = document.getElementById(id);
