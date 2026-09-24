@@ -1,26 +1,24 @@
 /* 清屿服务器规则 · 静态站交互
-   全部文档抽屉、站内搜索、页内目录高亮 */
+   左侧文档栏、站内搜索、页内目录高亮 */
 (function () {
   'use strict';
 
-  /* ---------- 全部文档抽屉 ---------- */
-  var menu = document.getElementById('menu');
-  var menuBtn = document.getElementById('menu-btn');
+  /* ---------- 左侧文档栏（窄屏从左侧滑出） ---------- */
+  var navBtn = document.getElementById('nav-btn');
 
-  function openMenu() {
-    if (menu) menu.classList.add('menu--open');
+  function closeNav() {
+    document.body.classList.remove('nav-open');
   }
 
-  function closeMenu() {
-    if (menu) menu.classList.remove('menu--open');
-  }
-
-  if (menuBtn) menuBtn.addEventListener('click', openMenu);
-
-  if (menu) {
-    menu.addEventListener('click', function (e) {
-      // 面板外的区域与关闭按钮都收起抽屉
-      if (e.target === menu || e.target.closest('.menu__close')) closeMenu();
+  if (navBtn) {
+    navBtn.addEventListener('click', function () {
+      document.body.classList.toggle('nav-open');
+    });
+    document.addEventListener('click', function (e) {
+      if (!document.body.classList.contains('nav-open')) return;
+      // 点遮罩或栏外任意处收起，点按钮与栏内链接不处理
+      if (e.target.closest('.sidebar') || e.target.closest('#nav-btn')) return;
+      closeNav();
     });
   }
 
@@ -34,7 +32,7 @@
 
   function openSearch() {
     if (!overlay) return;
-    closeMenu();
+    closeNav();
     overlay.hidden = false;
     input.value = '';
     render('');
@@ -131,7 +129,7 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       closeSearch();
-      closeMenu();
+      closeNav();
     }
     var typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
     if (!typing && (e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'))) {

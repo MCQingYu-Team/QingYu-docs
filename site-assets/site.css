@@ -1,6 +1,6 @@
 /* 清屿服务器规则 · 静态站样式
    设计对齐官网（www.aqcraft.cn）使用的 Forty 模板：底色 #242943、强调色 #9bf1ff、
-   纯直角、1px 半透明分隔线、Source Sans Pro 字栈、固定顶栏 + #menu 抽屉 + 首页 tiles。
+   纯直角、1px 半透明分隔线、Source Sans Pro 字栈、固定顶栏 + 左侧文档栏 + 首页 tiles。
    正文加粗字重与表格字号未沿用模板（模板正文 300 字重在中文下偏细）。 */
 
 :root {
@@ -28,6 +28,7 @@
     "Microsoft YaHei", Helvetica, sans-serif;
   --mono: "Courier New", Consolas, "Liberation Mono", monospace;
   --spine: 65em;
+  --side-w: 17em;
   --header-h: 3.25em;
 }
 
@@ -163,6 +164,11 @@ a:hover {
   color: var(--accent);
 }
 
+/* 目录按钮只在左侧栏收到屏外时出现 */
+.tab--menu {
+  display: none;
+}
+
 /* ---------- 骨架 ---------- */
 
 .wrapper {
@@ -170,10 +176,10 @@ a:hover {
 }
 
 .inner {
-  width: calc(100% - 6em);
+  width: 100%;
   max-width: var(--spine);
   margin: 0 auto;
-  padding: 4em 0 2em;
+  padding: 4em 3em 3em;
 }
 
 /* ---------- 首页头图 ---------- */
@@ -652,94 +658,98 @@ a:hover {
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
 }
 
-/* ---------- 全部文档抽屉（模板 #menu） ---------- */
+/* ---------- 左侧文档栏 ---------- */
 
-.menu {
-  position: fixed;
-  inset: 0;
-  z-index: 10002;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3em 2em;
-  overflow: hidden;
-  background: rgba(36, 41, 67, 0.9);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.35s ease, visibility 0.35s;
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
 }
 
-.menu--open {
-  opacity: 1;
-  visibility: visible;
+.sidebar {
+  display: none;
+  border-right: 1px solid var(--line);
 }
 
-.menu__inner {
-  position: relative;
-  width: 100%;
-  max-width: 52em;
-  max-height: 100%;
-  padding: 2.5em;
-  overflow: auto;
-  background: var(--bg-2);
-  border: 1px solid var(--line);
-  transform: translateY(-0.5em);
-  transition: transform 0.35s ease;
+.side-group {
+  margin-bottom: 2.25em;
 }
 
-.menu--open .menu__inner {
-  transform: none;
-}
-
-.menu__close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 4em;
-  height: 4em;
-  font-family: inherit;
-  font-size: 0.9em;
-  color: var(--fg);
-  background: none;
-  border: 0;
-  cursor: pointer;
-  transition: color 0.2s ease-in-out;
-}
-
-.menu__close:hover {
-  color: var(--accent);
-}
-
-.menu__title {
-  margin: 0 0 0.75em;
+.side-title {
+  margin-bottom: 0.85em;
+  padding-bottom: 0.5em;
   font-size: 0.72em;
   font-weight: 600;
   letter-spacing: 0.25em;
   color: var(--fg-faint);
+  border-bottom: 2px solid #ffffff;
 }
 
-.menu__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
-  gap: 1.75em 2.5em;
-}
-
-.menu__links a {
+.side-link {
   display: block;
-  padding: 0.6em 0;
+  padding: 0.45em 0;
   font-size: 0.85em;
   color: var(--fg-dim);
-  border-top: 1px solid var(--line);
   border-bottom: 0;
 }
 
-.menu__links li:first-child a {
-  border-top: 0;
+.side-link:hover {
+  color: var(--accent);
 }
 
-.menu__links a:hover,
-.menu__links a.is-active {
+.side-link--active {
+  padding-left: 0.75em;
   color: var(--accent);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+@media screen and (min-width: 1001px) {
+  .layout {
+    grid-template-columns: var(--side-w) minmax(0, 1fr);
+  }
+
+  .sidebar {
+    position: sticky;
+    top: var(--header-h);
+    display: block;
+    max-height: calc(100vh - var(--header-h));
+    padding: 4em 1.75em 3em 2.5em;
+    overflow-y: auto;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .tab--menu {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: var(--header-h);
+    bottom: 0;
+    left: 0;
+    z-index: 10001;
+    display: block;
+    width: var(--side-w);
+    max-width: 85vw;
+    padding: 2em 1.5em;
+    overflow-y: auto;
+    background: var(--bg-2);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  body.nav-open .sidebar {
+    transform: none;
+  }
+
+  body.nav-open::before {
+    content: "";
+    position: fixed;
+    inset: var(--header-h) 0 0;
+    z-index: 10000;
+    background: rgba(36, 41, 67, 0.8);
+  }
 }
 
 /* ---------- 站内搜索 ---------- */
@@ -840,8 +850,7 @@ a:hover {
 
 @media screen and (max-width: 980px) {
   .inner {
-    width: calc(100% - 3em);
-    padding: 3em 0 2em;
+    padding: 3em 1.5em 2em;
   }
 
   .hero > .inner {
@@ -858,10 +867,6 @@ a:hover {
 
   .toc__list {
     column-count: 1;
-  }
-
-  .menu__grid {
-    grid-template-columns: 1fr;
   }
 }
 

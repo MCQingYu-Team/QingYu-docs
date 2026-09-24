@@ -3,7 +3,7 @@
  * 清屿服务器规则 · 静态站点生成器
  *
  * 零依赖（只用 Node 标准库）：把 Markdown 源文件编译成纯静态 HTML 站点，
- * 界面形态对齐官网（www.aqcraft.cn）使用的 Forty 模板：固定顶栏 + 全部文档抽屉
+ * 界面形态对齐官网（www.aqcraft.cn）使用的 Forty 模板：固定顶栏 + 左侧文档栏
  * + 页内目录 + 站内搜索 + 首页卡片，深色单主题，mermaid 图按需加载。
  * 产物输出到 site/，可直接部署到任意静态托管。
  *
@@ -429,17 +429,17 @@ function shell(page) {
     return `<a class="tab tab--group${active ? ' tab--active' : ''}" href="${relLink(page.out, first.out)}">${escapeHtml(g.group)}</a>`;
   }).join('');
 
-  const menuGroups = NAV.map(
-    (g) => `    <div class="menu__group">
-      <h3 class="menu__title">${escapeHtml(g.group)}</h3>
-      <ul class="menu__links">${g.items
-        .map((src) => {
-          const p = pages.get(src);
-          const active = src === page.src ? ' class="is-active"' : '';
-          return `<li><a${active} href="${relLink(page.out, p.out)}">${escapeHtml(p.title)}</a></li>`;
-        })
-        .join('')}</ul>
-    </div>`,
+  const sidebar = NAV.map(
+    (g) => `      <nav class="side-group">
+        <div class="side-title">${escapeHtml(g.group)}</div>
+        <ul class="side-list">${g.items
+          .map((src) => {
+            const p = pages.get(src);
+            const active = src === page.src ? ' side-link--active' : '';
+            return `<li><a class="side-link${active}" href="${relLink(page.out, p.out)}">${escapeHtml(p.title)}</a></li>`;
+          })
+          .join('')}</ul>
+      </nav>`,
   ).join('\n');
 
   const tocItems = page.headings
@@ -473,30 +473,27 @@ function shell(page) {
 <header class="topbar">
   <a class="topbar__logo" href="${relLink(page.out, 'index.html')}"><strong>清屿</strong><span>服务器规则</span></a>
   <nav class="topbar__nav">${tabs}
+    <button class="tab tab--menu" id="nav-btn" aria-controls="sidebar" aria-label="文档目录">☰ 目录</button>
     <button class="tab" id="search-btn" aria-label="站内搜索">搜索</button>
-    <button class="tab" id="menu-btn" aria-controls="menu" aria-label="全部文档">全部文档 ≡</button>
   </nav>
 </header>
 
 <div class="wrapper">
-${isHome ? `${homeHero(page)}\n` : ''}  <div class="inner">
-${tocItems ? `    <details class="toc">\n      <summary class="toc__summary">本页目录</summary>\n      <ul class="toc__list">${tocItems}</ul>\n    </details>\n` : ''}    <article class="md">${body}</article>
-    <footer class="page-footer">
-      <span>© 清屿运营团队 · 修订须遵循「七日阳光流程」</span>
-      <ul class="footer-links">
-        <li><a href="https://www.aqcraft.cn" target="_blank" rel="noopener">官网</a></li>
-        <li><a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="${REPO_URL}/edit/${BRANCH}/${encodeURI(page.src)}" target="_blank" rel="noopener">编辑本页</a></li>
-      </ul>
-    </footer>
-  </div>
-</div>
+${isHome ? `${homeHero(page)}\n` : ''}  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+${sidebar}
+    </aside>
 
-<div class="menu" id="menu" role="dialog" aria-label="全部文档">
-  <div class="menu__inner">
-    <button class="menu__close" aria-label="关闭">✕</button>
-    <div class="menu__grid">
-${menuGroups}
+    <div class="inner">
+${tocItems ? `      <details class="toc">\n        <summary class="toc__summary">本页目录</summary>\n        <ul class="toc__list">${tocItems}</ul>\n      </details>\n` : ''}      <article class="md">${body}</article>
+      <footer class="page-footer">
+        <span>© 清屿运营团队 · 修订须遵循「七日阳光流程」</span>
+        <ul class="footer-links">
+          <li><a href="https://www.aqcraft.cn" target="_blank" rel="noopener">官网</a></li>
+          <li><a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="${REPO_URL}/edit/${BRANCH}/${encodeURI(page.src)}" target="_blank" rel="noopener">编辑本页</a></li>
+        </ul>
+      </footer>
     </div>
   </div>
 </div>
