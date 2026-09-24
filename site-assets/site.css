@@ -18,12 +18,6 @@
   --tint-2: rgba(212, 212, 255, 0.06);
   --accent: #9bf1ff;
   --accent-2: #53e3fb;
-  --c1: #6fc3df;
-  --c2: #8d82c4;
-  --c3: #ec8d81;
-  --c4: #e7b788;
-  --c5: #8ea9e8;
-  --c6: #87c5a4;
   --font: "Source Sans Pro", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", Helvetica, sans-serif;
   --mono: "Courier New", Consolas, "Liberation Mono", monospace;
@@ -40,6 +34,30 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  scrollbar-color: rgba(212, 212, 255, 0.22) var(--bg);
+  scrollbar-width: thin;
+}
+
+/* Firefox 走 scrollbar-color；WebKit 需要下面这组伪元素 */
+::-webkit-scrollbar {
+  width: 0.6em;
+  height: 0.6em;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: var(--bg-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 212, 255, 0.22);
+  background-clip: padding-box;
+  border: 0.15em solid transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 212, 255, 0.4);
+  background-clip: padding-box;
 }
 
 body {
@@ -159,8 +177,7 @@ a:hover {
   white-space: nowrap;
 }
 
-.tab:hover,
-.tab--active {
+.tab:hover {
   color: var(--accent);
 }
 
@@ -185,25 +202,11 @@ a:hover {
 /* ---------- 首页头图 ---------- */
 
 .hero {
-  position: relative;
-  overflow: hidden;
-  background: var(--bg);
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
   border-bottom: 1px solid var(--line);
 }
 
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(60% 120% at 12% 0%, rgba(111, 195, 223, 0.3), transparent 62%),
-    radial-gradient(55% 120% at 88% 8%, rgba(141, 130, 196, 0.28), transparent 62%),
-    radial-gradient(60% 110% at 55% 105%, rgba(135, 197, 164, 0.2), transparent 62%);
-}
-
 .hero > .inner {
-  position: relative;
-  z-index: 1;
   padding: 3em 0 2.25em;
 }
 
@@ -213,15 +216,6 @@ a:hover {
   font-weight: 600;
   letter-spacing: 0.06em;
   line-height: 1.15;
-}
-
-.hero h1::after {
-  content: "";
-  display: block;
-  width: 4em;
-  height: 2px;
-  margin: 0.4em 0 0;
-  background: #ffffff;
 }
 
 .hero__lead {
@@ -290,42 +284,15 @@ a:hover {
 }
 
 .tile {
-  position: relative;
   display: flex;
   flex-direction: column;
   padding: 2em 2em 1.85em;
   background: var(--bg-2);
+  transition: background-color 0.25s ease-in-out;
 }
 
-.tile::before,
-.tile::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-}
-
-.tile::before {
-  inset: 0;
-  background: var(--tile-color);
-  opacity: 0.1;
-  transition: opacity 0.35s ease;
-}
-
-.tile::after {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--tile-color);
-}
-
-.tile:hover::before {
-  opacity: 0.22;
-}
-
-.tile > * {
-  position: relative;
-  z-index: 1;
+.tile:hover {
+  background: var(--bg-3);
 }
 
 .tile h3 {
@@ -353,30 +320,6 @@ a:hover {
   font-size: 0.85em;
   line-height: 1.6;
   color: var(--fg-dim);
-}
-
-.tile--c1 {
-  --tile-color: var(--c1);
-}
-
-.tile--c2 {
-  --tile-color: var(--c2);
-}
-
-.tile--c3 {
-  --tile-color: var(--c3);
-}
-
-.tile--c4 {
-  --tile-color: var(--c4);
-}
-
-.tile--c5 {
-  --tile-color: var(--c5);
-}
-
-.tile--c6 {
-  --tile-color: var(--c6);
 }
 
 /* ---------- 页内目录 ---------- */
@@ -460,12 +403,12 @@ a:hover {
 }
 
 .md h2 {
-  margin: 3em 0 1em;
-  padding-bottom: 0.35em;
-  font-size: 1.6em;
+  margin: 2.4em 0 0.9em;
+  padding-bottom: 0.4em;
+  font-size: 1.45em;
   font-weight: 600;
   letter-spacing: 0.04em;
-  border-bottom: 2px solid #ffffff;
+  border-bottom: 1px solid var(--line-2);
 }
 
 .md > :first-child {
@@ -643,21 +586,6 @@ a:hover {
   margin-left: auto;
 }
 
-.footer-links a {
-  padding: 0.4em 1em;
-  color: #ffffff;
-  border: 1px solid #ffffff;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.footer-links a:hover {
-  color: #000000;
-  background: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
-}
-
 /* ---------- 左侧文档栏 ---------- */
 
 .layout {
@@ -682,7 +610,7 @@ a:hover {
   font-weight: 600;
   letter-spacing: 0.25em;
   color: var(--fg-faint);
-  border-bottom: 2px solid #ffffff;
+  border-bottom: 1px solid var(--line-2);
 }
 
 .side-link {
@@ -915,11 +843,6 @@ a:hover {
 
 @media screen and (max-width: 480px) {
   .topbar__logo span {
-    display: none;
-  }
-
-  /* 手机端只留图标入口，文档列表走抽屉 */
-  .tab--group {
     display: none;
   }
 }

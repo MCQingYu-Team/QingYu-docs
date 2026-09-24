@@ -281,8 +281,6 @@ function firstHeading(source) {
 const navOrder = NAV.flatMap((g) => g.items);
 const allSources = [...navOrder, ...EXTRA_PAGES];
 const outOf = new Map(allSources.map((src) => [src, outPath(src)]));
-const groupOf = new Map();
-for (const g of NAV) for (const src of g.items) groupOf.set(src, g.group);
 
 const pages = new Map();
 for (const src of allSources) {
@@ -372,7 +370,7 @@ function firstParagraph(source) {
 }
 
 /**
- * 首页的「规则体系」表格换成套色卡片。表格仍是唯一数据源：
+ * 首页的「规则体系」表格换成卡片墙。表格仍是唯一数据源：
  * 版本号由 scripts/check-references.mjs 与各文档头部核对。
  */
 function homeTiles(html) {
@@ -385,11 +383,11 @@ function homeTiles(html) {
   );
 
   const tiles = rows
-    .map((cells, i) => {
+    .map((cells) => {
       const href = (cells[0].match(/href="([^"]+)"/) || [])[1] || '#';
       const target = pagesByOut.get(href);
       const title = target ? target.title : cells[0].replace(/<[^>]+>/g, '').replace(/\.md$/, '');
-      return `<article class="tile tile--c${(i % 6) + 1}">
+      return `<article class="tile">
 <h3><a href="${href}">${escapeHtml(title)}</a></h3>
 <p class="tile__meta">${cells[1] || ''} · ${cells[2] || ''}</p>
 <p class="tile__desc">${cells[3] || ''}</p>
@@ -420,14 +418,7 @@ function homeHero(page, lead) {
 
 function shell(page) {
   const base = baseHref(page);
-  const currentGroup = groupOf.get(page.src);
   const isHome = page.src === '规则/index.md';
-
-  const tabs = NAV.map((g) => {
-    const active = g.group === currentGroup;
-    const first = pages.get(g.items[0]);
-    return `<a class="tab tab--group${active ? ' tab--active' : ''}" href="${relLink(page.out, first.out)}">${escapeHtml(g.group)}</a>`;
-  }).join('');
 
   const sidebar = NAV.map(
     (g) => `      <nav class="side-group">
@@ -475,7 +466,7 @@ function shell(page) {
 <body>
 <header class="topbar">
   <a class="topbar__logo" href="${relLink(page.out, 'index.html')}"><strong>清屿</strong><span>服务器规则</span></a>
-  <nav class="topbar__nav">${tabs}
+  <nav class="topbar__nav">
     <button class="tab tab--menu" id="nav-btn" aria-controls="sidebar" aria-label="文档目录">☰ 目录</button>
     <button class="tab" id="search-btn" aria-label="站内搜索">搜索</button>
   </nav>
