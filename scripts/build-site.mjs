@@ -401,7 +401,7 @@ function homeTiles(html) {
 }
 
 /** 首页头图：标题 + 导语 + 主要入口按钮 */
-function homeHero(page) {
+function homeHero(page, lead) {
   const actions = HOME_ACTIONS.map((a) => {
     const href = a.href || relLink(page.out, pages.get(a.src).out);
     const cls = `button${a.primary ? ' button--primary' : ''}`;
@@ -412,7 +412,7 @@ function homeHero(page) {
   return `<div class="hero">
   <div class="inner">
     <h1>${escapeHtml(page.title)}</h1>
-    <p class="hero__lead">${inline(firstParagraph(page.source), makePageCtx(page))}</p>
+    <p class="hero__lead">${lead}</p>
     <ul class="actions">${actions}</ul>
   </div>
 </div>`;
@@ -450,10 +450,13 @@ function shell(page) {
     )
     .join('');
 
-  // 首页的 H1 由头图承担，正文里去掉，避免同一标题出现两次
+  // 首页的标题与导语由头图承担，正文里去掉这两处，避免同一段话出现两次
+  const lead = isHome ? inline(firstParagraph(page.source), makePageCtx(page)) : '';
   let body = page.html;
   if (isHome) {
-    body = homeTiles(body).replace(/<h1 [^>]*>[\s\S]*?<\/h1>/, '');
+    body = homeTiles(body)
+      .replace(/<h1 [^>]*>[\s\S]*?<\/h1>/, '')
+      .replace(`<p>${lead}</p>`, '');
   }
 
   const docTitle = page.title === SITE_NAME ? SITE_NAME : `${page.title} · ${SITE_NAME}`;
@@ -479,7 +482,7 @@ function shell(page) {
 </header>
 
 <div class="wrapper">
-${isHome ? `${homeHero(page)}\n` : ''}  <div class="layout">
+${isHome ? `${homeHero(page, lead)}\n` : ''}  <div class="layout">
     <aside class="sidebar" id="sidebar">
 ${sidebar}
     </aside>
