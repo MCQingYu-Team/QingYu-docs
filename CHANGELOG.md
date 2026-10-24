@@ -13,6 +13,7 @@
 
 ### 变更
 
+- **文档站迁移到 VitePress：** 移除自建生成器 `scripts/build-site.mjs`、`scripts/serve-site.mjs` 与 `site-assets/`，改用 VitePress（配置在 `.vitepress/`）；页面地址保持不变；站点图标改为团队头像；自定义域名改为 [wiki.aqcraft.cn](https://wiki.aqcraft.cn)
 - **玩家身份与治理：** 《清屿服务器玩家身份与治理条例》升级至 v2.0.0 —— 四项身份（聚集地召集人 / 建造者 / 维护者 / 荣誉成员）合并为单一身份「贡献者」；删除「提案优先」「专属频道」等身份特权；删除「90 天不活跃撤销身份」，改为长期保留；身份权益收敛为称号、署名、展示位三项；正文由 488 行压缩至 285 行（提案、表决、复议、执行层边界与回归玩家条款保留）
 - **玩家守则：** 升级至 v3.3.1，1.1.2 适用对象中的「建筑师」改为「贡献者」，与新的单一身份体系统一
 - **文档站：** 改为自建静态 HTML 站——`scripts/build-site.mjs` 零依赖生成页面，`site-assets/site.css`、`site-assets/site.js` 提供样式与交互，产物输出到 `site/`；移除 MkDocs 与 `mkdocs.yml`，GitHub Pages 改用官方 Pages Actions 部署

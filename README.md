@@ -54,7 +54,7 @@
 |------|------------|
 | **QQ 群** | 1102137231 |
 | **官网** | [www.aqcraft.cn](https://www.aqcraft.cn) |
-| **规则文档站** | [mcqingyu-team.github.io/QingYu-docs](https://mcqingyu-team.github.io/QingYu-docs/)（GitHub Pages 自动部署） |
+| **规则文档站** | [wiki.aqcraft.cn](https://wiki.aqcraft.cn)（VitePress，GitHub Pages 自动部署） |
 | **问题反馈** | [GitHub Issues](https://github.com/MCQingYu-Team/QingYu-docs/issues)（已配置标准模板） |
 
 ## 规则修订：七日阳光流程
@@ -70,8 +70,9 @@
 ```text
 .
 ├── .github/              # CI 工作流、Issue / PR 模板
-├── scripts/              # 站点生成器、本地预览服务器、文档一致性检查器
-├── site-assets/          # 站点样式与脚本（site.css、site.js）
+├── .vitepress/           # VitePress 配置（导航、侧边栏、主题色）
+├── public/               # 站点静态资源（logo.png、CNAME）
+├── scripts/              # 文档一致性检查器
 ├── 规则/                 # 规则文档（站点源文）
 │   ├── index.md          # 首页
 │   ├── 404.md            # 404 页面
@@ -93,7 +94,7 @@
 - **修订流程：** 见上方"七日阳光流程"章节，操作细则见 [CONTRIBUTING.md](CONTRIBUTING.md)
 - **更新记录：** 见 [CHANGELOG.md](CHANGELOG.md)
 - **版本与许可：** 文档版本号见各文件头部；仓库许可见 [LICENSE](LICENSE)
-- **本地校验：** `npm run verify`（markdownlint + 5 类一致性检查）、`npm run site:build`（生成静态站到 `site/`）、`npm run site:serve`（本地预览）
+- **本地校验：** `npm run verify`（markdownlint + 5 类一致性检查）、`npm run site:dev`（本地实时预览）、`npm run site:build`（生成静态站到 `site/`）、`npm run site:serve`（预览构建产物）
 
 ---
 

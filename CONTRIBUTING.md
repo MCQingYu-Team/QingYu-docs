@@ -70,17 +70,18 @@
 
 ## 其他内容维护
 
-- **文档站：** 导航由 `scripts/build-site.mjs` 中的 `NAV` 定义，需与 `规则/` 目录结构保持一致，新增文档后同步登记；顶栏由 `TOP_NAV` 定义，首页大标题与特性卡片由 `HOME_HERO`、`HOME_FEATURES` 定义；首页「规则体系」表格会自动渲染成卡片（表格仍是唯一数据源）
+- **文档站：** 使用 VitePress。顶栏与侧边栏由 `.vitepress/config.mjs` 中的 `nav`、`sidebar` 定义，新增文档后同步登记；首页大标题与特性卡片写在 `规则/index.md` 的 frontmatter（`hero`、`features`）里；主题色在 `.vitepress/theme/custom.css`；站点图标为 `public/logo.png`，自定义域名为 `public/CNAME`
 - **校对检查：** `npm run check` 会检查编号引用、章节引用、内部链接、版本一致、头部规范
-- **仓库地址：** 首次发布到新仓库时，请全局替换 `README.md`、`scripts/build-site.mjs` 中的仓库名与 Pages 地址
+- **仓库地址：** 首次发布到新仓库时，请全局替换 `README.md`、`.vitepress/config.mjs` 中的仓库名，并修改 `public/CNAME` 中的域名
 
 ## 本地校验
 
 ```bash
 npm install
 npm run verify      # markdownlint + 一致性检查
+npm run site:dev    # 本地实时预览文档站
 npm run site:build  # 生成静态站到 site/
-npm run site:serve  # 本地预览文档站
+npm run site:serve  # 预览构建产物
 ```
 
 ---

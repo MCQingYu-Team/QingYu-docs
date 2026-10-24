@@ -1,3 +1,44 @@
+---
+layout: home
+
+hero:
+  name: 清屿服务器
+  text: 规则与使用文档
+  tagline: 生存 · 红石 · 建筑 · 地铁 · 赛事，快速上手服务器的规则与玩法
+  image:
+    src: /logo.png
+    alt: 清屿服务器
+  actions:
+    - theme: brand
+      text: 快速开始
+      link: /指南/选择客户端
+    - theme: alt
+      text: 玩家守则
+      link: /清屿服务器玩家守则
+    - theme: alt
+      text: 处罚细目
+      link: /处罚细目表
+
+features:
+  - title: 双端互通
+    details: Java 版与基岩版（Geyser）同一地址加入，同 ID 数据互通
+    link: /指南/选择客户端
+  - title: 即进即绑
+    details: 进服拿绑定码，发到 QQ 群，机器人自动加白名单
+    link: /指南/入服与绑定
+  - title: 规则公开
+    details: 玩家守则、管理员条例、地铁条例全部公开，处罚有据可查
+    link: /清屿服务器玩家守则
+  - title: 七日阳光
+    details: 规则不能偷偷改：任何修订公示 7 日，玩家可提意见与表决
+    link: /清屿服务器七日阳光流程
+  - title: 处罚细目
+    details: 七大类 175 条处罚对照，编号可直接搜索（如 L-003）
+    link: /处罚细目表
+  - title: 玩家共治
+    details: 无等级、单一身份「贡献者」，重大事项由玩家表决
+    link: /清屿服务器玩家身份与治理条例
+---
 # 清屿服务器规则
 
 **生存 · 红石 · 建筑 · 地铁 · 赛事** —— 一个由玩家共建、长期运营的 Minecraft 社区服务器。本站收录全部官方规则、处罚细目、入服指引与服务器信息。
@@ -100,7 +141,7 @@
 |------|------------|
 | **QQ 群** | 1102137231 |
 | **官网** | [www.aqcraft.cn](https://www.aqcraft.cn) |
-| **规则文档站** | 本站（GitHub Pages 自动部署） |
+| **规则文档站** | 本站（[wiki.aqcraft.cn](https://wiki.aqcraft.cn)，GitHub Pages 自动部署） |
 | **问题反馈** | GitHub Issues（已配置标准表单） |
 | **游戏内** | 主城公告栏、游戏内 @值班管理员 |
 
