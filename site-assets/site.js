@@ -1,24 +1,57 @@
-/* 清屿服务器规则 · 静态站交互
-   左侧文档栏、站内搜索、页内目录高亮 */
+/* 清屿服务器文档 · 静态站交互
+   深色模式、移动端菜单与侧边栏、站内搜索、大纲高亮 */
 (function () {
   'use strict';
 
-  /* ---------- 左侧文档栏（窄屏从左侧滑出） ---------- */
+  var root = document.documentElement;
+  var body = document.body;
+  var base = window.SITE_BASE || '';
+
+  /* ---------- 深色模式 ---------- */
+  var themeBtn = document.getElementById('theme-btn');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      var dark = root.classList.toggle('dark');
+      try {
+        localStorage.setItem('qy-theme', dark ? 'dark' : 'light');
+      } catch (e) {}
+    });
+  }
+
+  /* ---------- 移动端顶栏菜单 ---------- */
+  var menuBtn = document.getElementById('menu-btn');
+  var mobileNav = document.getElementById('mobile-nav');
+  if (menuBtn && mobileNav) {
+    menuBtn.addEventListener('click', function () {
+      var open = mobileNav.hidden;
+      mobileNav.hidden = !open;
+      menuBtn.setAttribute('aria-expanded', String(open));
+    });
+  }
+
+  /* ---------- 侧边栏抽屉（窄屏） ---------- */
   var navBtn = document.getElementById('nav-btn');
 
   function closeNav() {
-    document.body.classList.remove('nav-open');
+    body.classList.remove('nav-open');
+    if (navBtn) navBtn.setAttribute('aria-expanded', 'false');
   }
 
   if (navBtn) {
-    navBtn.addEventListener('click', function () {
-      document.body.classList.toggle('nav-open');
+    navBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = body.classList.toggle('nav-open');
+      navBtn.setAttribute('aria-expanded', String(open));
     });
     document.addEventListener('click', function (e) {
-      if (!document.body.classList.contains('nav-open')) return;
-      // 点遮罩或栏外任意处收起，点按钮与栏内链接不处理
-      if (e.target.closest('.sidebar') || e.target.closest('#nav-btn')) return;
-      closeNav();
+      if (body.classList.contains('nav-open') && !e.target.closest('.sidebar')) closeNav();
+    });
+  }
+
+  var topBtn = document.getElementById('top-btn');
+  if (topBtn) {
+    topBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
@@ -29,10 +62,12 @@
   var results = document.getElementById('search-results');
   var hits = [];
   var cursor = -1;
+  var lastFocus = null;
 
   function openSearch() {
     if (!overlay) return;
     closeNav();
+    lastFocus = document.activeElement;
     overlay.hidden = false;
     input.value = '';
     render('');
@@ -40,8 +75,9 @@
   }
 
   function closeSearch() {
-    if (!overlay) return;
+    if (!overlay || overlay.hidden) return;
     overlay.hidden = true;
+    if (lastFocus) lastFocus.focus();
   }
 
   function escapeHtml(s) {
@@ -73,13 +109,14 @@
       results.innerHTML = '<div class="search__empty">没有找到匹配的内容</div>';
       return;
     }
+    // 索引里的地址相对站点根目录，子目录页面需要补上 base
     results.innerHTML = hits
       .map(function (e, i) {
         return (
           '<a class="search__hit' +
           (i === 0 ? ' search__hit--active' : '') +
           '" href="' +
-          e.u +
+          escapeHtml(base + e.u) +
           '"><b>' +
           escapeHtml(e.h) +
           '</b><small>' +
@@ -121,7 +158,7 @@
         e.preventDefault();
         move(-1);
       } else if (e.key === 'Enter' && hits[cursor]) {
-        window.location.href = hits[cursor].u;
+        window.location.href = base + hits[cursor].u;
       }
     });
   }
@@ -138,7 +175,7 @@
     }
   });
 
-  /* ---------- 页内目录高亮 ---------- */
+  /* ---------- 大纲高亮 ---------- */
   var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-link'));
   if (tocLinks.length && 'IntersectionObserver' in window) {
     var map = {};
