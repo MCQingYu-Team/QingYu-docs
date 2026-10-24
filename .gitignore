@@ -1,5 +1,6 @@
 node_modules/
 site/
+.vitepress/cache/
 .DS_Store
 Thumbs.db
 *.log
