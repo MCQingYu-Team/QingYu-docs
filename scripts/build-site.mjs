@@ -3,8 +3,8 @@
  * 清屿服务器规则 · 静态站点生成器
  *
  * 零依赖（只用 Node 标准库）：把 Markdown 源文件编译成纯静态 HTML 站点，
- * 界面形态对齐官网（www.aqcraft.cn）使用的 Forty 模板：固定顶栏 + 左侧文档栏
- * + 页内目录 + 站内搜索 + 首页卡片，深色单主题，mermaid 图按需加载。
+ * 界面形态参照 VitePress 默认主题：顶栏导航 + 可折叠侧边栏 + 右侧大纲 + 上下页
+ * + 站内搜索 + 首页 hero/特性卡片，浅色/深色双主题，mermaid 图按需加载。
  * 产物输出到 site/，可直接部署到任意静态托管。
  *
  * 用法：
@@ -28,7 +28,10 @@ const CHECK_ONLY = process.argv.includes('--check');
  * ------------------------------------------------------------------ */
 
 const NAV = [
-  { group: '总览', items: ['规则/index.md', '服务器信息.md'] },
+  {
+    group: '快速开始',
+    items: ['规则/指南/选择客户端.md', '规则/指南/入服与绑定.md', '规则/指南/常见问题.md', '服务器信息.md'],
+  },
   {
     group: '规则',
     items: [
@@ -54,15 +57,39 @@ const NAV = [
   },
 ];
 
-/** 首页头图的入口按钮；带 href 的是站外链接 */
-const HOME_ACTIONS = [
-  { src: '规则/清屿服务器玩家守则.md', label: '读玩家守则', primary: true },
-  { src: '规则/处罚细目表.md', label: '看处罚细目表' },
-  { href: 'https://www.aqcraft.cn', label: '访问官网' },
+/** 顶栏导航：src 指向分组的第一页，href 为站外链接 */
+const TOP_NAV = [
+  { label: '主页', src: '规则/index.md' },
+  { label: '快速开始', src: '规则/指南/选择客户端.md', group: '快速开始' },
+  { label: '规则', src: '规则/清屿服务器玩家守则.md', group: '规则' },
+  { label: '处罚', src: '规则/处罚细目表.md', group: '处罚' },
+  { label: '官网', href: 'https://www.aqcraft.cn' },
+];
+
+/** 首页 hero 的名称、标语与入口按钮 */
+const HOME_HERO = {
+  name: '清屿服务器',
+  text: '规则与使用文档',
+  tagline: '生存 · 红石 · 建筑 · 地铁 · 赛事，快速上手服务器的规则与玩法',
+  actions: [
+    { src: '规则/指南/选择客户端.md', label: '快速开始', primary: true },
+    { src: '规则/清屿服务器玩家守则.md', label: '玩家守则' },
+    { src: '规则/处罚细目表.md', label: '处罚细目' },
+  ],
+};
+
+/** 首页特性卡片 */
+const HOME_FEATURES = [
+  { title: '双端互通', details: 'Java 版与基岩版（Geyser）同一地址加入，同 ID 数据互通', src: '规则/指南/选择客户端.md' },
+  { title: '即进即绑', details: '进服拿绑定码，发到 QQ 群，机器人自动加白名单', src: '规则/指南/入服与绑定.md' },
+  { title: '规则公开', details: '玩家守则、管理员条例、地铁条例全部公开，处罚有据可查', src: '规则/清屿服务器玩家守则.md' },
+  { title: '七日阳光', details: '规则不能偷偷改：任何修订公示 7 日，玩家可提意见与表决', src: '规则/清屿服务器七日阳光流程.md' },
+  { title: '处罚细目', details: '七大类 175 条处罚对照，编号可直接搜索（如 L-003）', src: '规则/处罚细目表.md' },
+  { title: '玩家共治', details: '无等级、单一身份「贡献者」，重大事项由玩家表决', src: '规则/清屿服务器玩家身份与治理条例.md' },
 ];
 
 /** 不在导航里、但仍需生成的页面 */
-const EXTRA_PAGES = ['规则/404.md'];
+const EXTRA_PAGES = ['规则/index.md', '规则/404.md'];
 
 /** 源文件路径 → 输出文件路径 */
 function outPath(src) {
@@ -348,8 +375,8 @@ for (const [, page] of rendered) {
  * 5. 页面外壳
  * ------------------------------------------------------------------ */
 
-const SITE_NAME = '清屿服务器规则';
-const SITE_DESC = '清屿服务器官方规则文档：玩家守则、管理员条例、地铁条例、身份与治理条例与处罚细目';
+const SITE_NAME = '清屿服务器文档';
+const SITE_DESC = '清屿服务器官方文档：入服指南、玩家守则、管理员条例、地铁条例、身份与治理条例与处罚细目';
 
 const baseHref = (page) => {
   const depth = page.out.split('/').length - 1;
@@ -358,21 +385,7 @@ const baseHref = (page) => {
 
 const pagesByOut = new Map([...pages.values()].map((p) => [p.out, p]));
 
-/** 取文档首个普通段落，作为首页头图的导语 */
-function firstParagraph(source) {
-  return (
-    source
-      .replace(/\r\n/g, '\n')
-      .split('\n')
-      .map((l) => l.trim())
-      .find((l) => l && !/^(#{1,6}\s|>\s?|[-*+]\s|\||`|\d+\.\s)/.test(l)) || ''
-  );
-}
-
-/**
- * 首页的「规则体系」表格换成卡片墙。表格仍是唯一数据源：
- * 版本号由 scripts/check-references.mjs 与各文档头部核对。
- */
+/** 首页的「规则体系」表格换成卡片墙。表格仍是唯一数据源：版本号由 check-references 与各文档头部核对。 */
 function homeTiles(html) {
   const table = html.match(/<div class="table-wrap"><table>[\s\S]*?<\/table><\/div>/);
   if (!table) return html;
@@ -387,70 +400,120 @@ function homeTiles(html) {
       const href = (cells[0].match(/href="([^"]+)"/) || [])[1] || '#';
       const target = pagesByOut.get(href);
       const title = target ? target.title : cells[0].replace(/<[^>]+>/g, '').replace(/\.md$/, '');
-      return `<article class="tile">
-<h3><a href="${href}">${escapeHtml(title)}</a></h3>
-<p class="tile__meta">${cells[1] || ''} · ${cells[2] || ''}</p>
+      return `<a class="tile" href="${href}">
+<h3>${escapeHtml(title)}</h3>
+<p class="tile__meta"><span class="badge">${cells[1] || ''}</span>${cells[2] || ''}</p>
 <p class="tile__desc">${cells[3] || ''}</p>
-</article>`;
+</a>`;
     })
     .join('\n');
 
   return html.replace(table[0], `<div class="tiles">\n${tiles}\n</div>`);
 }
 
-/** 首页头图：标题 + 导语 + 主要入口按钮 */
-function homeHero(page, lead) {
-  const actions = HOME_ACTIONS.map((a) => {
-    const href = a.href || relLink(page.out, pages.get(a.src).out);
-    const cls = `button${a.primary ? ' button--primary' : ''}`;
-    const ext = a.href ? ' target="_blank" rel="noopener"' : '';
-    return `<li><a class="${cls}" href="${href}"${ext}>${a.label}</a></li>`;
-  }).join('');
+/** 首页 hero + 特性卡片 */
+function homeTop(page) {
+  const link = (src) => relLink(page.out, pages.get(src).out);
+  const actions = HOME_HERO.actions
+    .map((a) => `<a class="button${a.primary ? ' button--brand' : ''}" href="${link(a.src)}">${a.label}</a>`)
+    .join('');
+  const features = HOME_FEATURES.map(
+    (f) => `<a class="feature" href="${link(f.src)}">
+  <h2>${escapeHtml(f.title)}</h2>
+  <p>${escapeHtml(f.details)}</p>
+  <span class="feature__more">开始阅读</span>
+</a>`,
+  ).join('\n');
 
-  return `<div class="hero">
-  <div class="inner">
-    <h1>${escapeHtml(page.title)}</h1>
-    <p class="hero__lead">${lead}</p>
-    <ul class="actions">${actions}</ul>
-  </div>
-</div>`;
+  return `<section class="hero">
+  <h1><span class="hero__name">${HOME_HERO.name}</span><span class="hero__text">${HOME_HERO.text}</span></h1>
+  <p class="hero__tagline">${HOME_HERO.tagline}</p>
+  <div class="hero__actions">${actions}</div>
+</section>
+<section class="features">
+${features}
+</section>`;
 }
+
+/** 当前页属于哪个导航分组 */
+const groupOf = (src) => (NAV.find((g) => g.items.includes(src)) || {}).group;
 
 function shell(page) {
   const base = baseHref(page);
   const isHome = page.src === '规则/index.md';
+  const curGroup = groupOf(page.src);
 
-  const sidebar = NAV.map(
-    (g) => `      <nav class="side-group">
-        <div class="side-title">${escapeHtml(g.group)}</div>
-        <ul class="side-list">${g.items
-          .map((src) => {
-            const p = pages.get(src);
-            const active = src === page.src ? ' side-link--active' : '';
-            return `<li><a class="side-link${active}" href="${relLink(page.out, p.out)}">${escapeHtml(p.title)}</a></li>`;
-          })
-          .join('')}</ul>
-      </nav>`,
-  ).join('\n');
+  const topNav = TOP_NAV.map((n) => {
+    if (n.href) return `<a class="nav-link" href="${n.href}" target="_blank" rel="noopener">${n.label}<span class="ext" aria-hidden="true">↗</span></a>`;
+    const active = (n.group && n.group === curGroup) || (!n.group && n.src === page.src);
+    return `<a class="nav-link${active ? ' nav-link--active' : ''}" href="${relLink(page.out, pages.get(n.src).out)}">${n.label}</a>`;
+  }).join('');
 
-  const tocItems = page.headings
+  const sidebar = NAV.map((g) => {
+    const open = g.group === curGroup || !curGroup;
+    const items = g.items
+      .map((src) => {
+        const p = pages.get(src);
+        const active = src === page.src ? ' side-link--active' : '';
+        const aria = src === page.src ? ' aria-current="page"' : '';
+        return `<li><a class="side-link${active}" href="${relLink(page.out, p.out)}"${aria}>${escapeHtml(p.title)}</a></li>`;
+      })
+      .join('');
+    return `<details class="side-group"${open ? ' open' : ''}>
+  <summary class="side-title">${escapeHtml(g.group)}</summary>
+  <ul class="side-list">${items}</ul>
+</details>`;
+  }).join('\n');
+
+  const outline = page.headings
     .filter((h) => h.level >= 2 && h.level <= 3)
-    .map(
-      (h) =>
-        `<li><a class="toc-link toc-link--h${h.level}" href="#${h.id}">${h.label}</a></li>`,
-    )
+    .map((h) => `<li><a class="toc-link toc-link--h${h.level}" href="#${h.id}">${h.label.replace(/<a [^>]*>|<\/a>/g, '')}</a></li>`)
     .join('');
 
-  // 首页的标题与导语由头图承担，正文里去掉这两处，避免同一段话出现两次
-  const lead = isHome ? inline(firstParagraph(page.source), makePageCtx(page)) : '';
-  let body = page.html;
-  if (isHome) {
-    body = homeTiles(body)
-      .replace(/<h1 [^>]*>[\s\S]*?<\/h1>/, '')
-      .replace(`<p>${lead}</p>`, '');
-  }
+  // 上一页 / 下一页按侧边栏顺序
+  const idx = navOrder.indexOf(page.src);
+  const prev = idx > 0 ? pages.get(navOrder[idx - 1]) : null;
+  const next = idx >= 0 && idx < navOrder.length - 1 ? pages.get(navOrder[idx + 1]) : null;
+  const pagerLink = (p, dir) =>
+    p
+      ? `<a class="pager__link pager__link--${dir}" href="${relLink(page.out, p.out)}"><span class="pager__label">${dir === 'prev' ? '上一页' : '下一页'}</span><span class="pager__title">${escapeHtml(p.title)}</span></a>`
+      : '<span></span>';
+  const pager = idx >= 0 ? `<nav class="pager" aria-label="翻页">${pagerLink(prev, 'prev')}${pagerLink(next, 'next')}</nav>` : '';
 
-  const docTitle = page.title === SITE_NAME ? SITE_NAME : `${page.title} · ${SITE_NAME}`;
+  const docTitle = isHome ? SITE_NAME : `${page.title} | ${SITE_NAME}`;
+
+  const footer = `<footer class="site-footer">
+  <p>规则文档依据<a href="${REPO_URL}/blob/${BRANCH}/LICENSE" target="_blank" rel="noopener">清屿服务器规则许可协议</a>发布 · 修订须遵循七日阳光流程</p>
+  <p>Copyright © 2026 清屿运营团队 · QQ 群 1102137231</p>
+</footer>`;
+
+  let main;
+  if (isHome) {
+    // 首页正文去掉 h1 与导语段落（由 hero 承担）
+    const body = homeTiles(page.html)
+      .replace(/<h1 [^>]*>[\s\S]*?<\/h1>/, '')
+      .replace(/^\s*<p>[\s\S]*?<\/p>/, '');
+    main = `<main class="home" id="content">
+${homeTop(page)}
+<article class="md home__body">${body}</article>
+</main>
+${footer}`;
+  } else {
+    main = `<div class="layout">
+  <aside class="sidebar" id="sidebar" aria-label="文档目录">
+${sidebar}
+  </aside>
+  <div class="content">
+    <main class="doc" id="content">
+      ${curGroup ? `<p class="doc__group">${escapeHtml(curGroup)}</p>` : ''}
+      <article class="md">${page.html}</article>
+      <div class="doc__edit"><a href="${REPO_URL}/edit/${BRANCH}/${encodeURI(page.src)}" target="_blank" rel="noopener">在 GitHub 上编辑此页</a></div>
+      ${pager}
+    </main>
+    ${outline ? `<aside class="aside" aria-label="本页大纲"><div class="outline"><p class="outline__title">本页目录</p><ul class="outline__list">${outline}</ul></div></aside>` : ''}
+  </div>
+</div>`;
+  }
 
   return `<!doctype html>
 <html lang="zh-CN">
@@ -459,50 +522,44 @@ function shell(page) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(docTitle)}</title>
 <meta name="description" content="${escapeHtml(SITE_DESC)}">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23242943'/%3E%3Cpath d='M8 22V10h4l4 6 4-6h4v12h-3v-7l-5 7-5-7v7z' fill='%239bf1ff'/%3E%3C/svg%3E">
+<script>try{var t=localStorage.getItem('qy-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314b8a6'/%3E%3Cpath d='M9 22V10h3.5l3.5 5.5 3.5-5.5H23v12h-3v-7l-4 6-4-6v7z' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="${base}assets/site.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,600,600italic&display=swap" media="print" onload="this.media='all'">
 </head>
-<body>
-<header class="topbar">
-  <a class="topbar__logo" href="${relLink(page.out, 'index.html')}"><strong>清屿</strong><span>服务器规则</span></a>
-  <nav class="topbar__nav">
-    <button class="tab tab--menu" id="nav-btn" aria-controls="sidebar" aria-label="文档目录">☰ 目录</button>
-    <button class="tab" id="search-btn" aria-label="站内搜索">搜索</button>
-  </nav>
-</header>
-
-<div class="wrapper">
-${isHome ? `${homeHero(page, lead)}\n` : ''}  <div class="layout">
-    <aside class="sidebar" id="sidebar">
-${sidebar}
-    </aside>
-
-    <div class="inner">
-${tocItems ? `      <details class="toc">\n        <summary class="toc__summary">本页目录</summary>\n        <ul class="toc__list">${tocItems}</ul>\n      </details>\n` : ''}      <article class="md">${body}</article>
-      <footer class="page-footer">
-        <span>© 清屿运营团队 · 修订须遵循「七日阳光流程」</span>
-        <ul class="footer-links">
-          <li><a href="https://www.aqcraft.cn" target="_blank" rel="noopener">官网</a></li>
-          <li><a href="${REPO_URL}" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="${REPO_URL}/edit/${BRANCH}/${encodeURI(page.src)}" target="_blank" rel="noopener">编辑本页</a></li>
-        </ul>
-      </footer>
+<body class="${isHome ? 'is-home' : 'is-doc'}">
+<a class="skip" href="#content">跳到正文</a>
+<header class="navbar">
+  <div class="navbar__inner">
+    <a class="navbar__title" href="${relLink(page.out, 'index.html')}"><span class="navbar__logo" aria-hidden="true">屿</span>${SITE_NAME}</a>
+    <button class="search-btn" id="search-btn" type="button" aria-label="搜索"><span class="search-btn__icon" aria-hidden="true"></span><span class="search-btn__text">搜索文档</span><kbd>Ctrl K</kbd></button>
+    <nav class="navbar__menu" aria-label="主导航">${topNav}</nav>
+    <div class="navbar__extra">
+      <a class="icon-btn icon-btn--gh" href="${REPO_URL}" target="_blank" rel="noopener" aria-label="GitHub 仓库"></a>
+      <button class="icon-btn icon-btn--theme" id="theme-btn" type="button" aria-label="切换深色模式"></button>
     </div>
+    <button class="hamburger" id="menu-btn" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span><span></span></button>
   </div>
-</div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="移动端导航" hidden>${topNav}</nav>
+</header>
+${isHome ? '' : `<div class="localnav">
+  <button class="localnav__menu" id="nav-btn" type="button" aria-controls="sidebar" aria-expanded="false">菜单</button>
+  ${outline ? '<button class="localnav__top" id="top-btn" type="button">返回顶部</button>' : ''}
+</div>`}
+${main}
 
 <div class="search" id="search" hidden>
-  <div class="search__panel">
-    <input id="search-input" type="search" placeholder="搜索规则、编号（如 L-003）、条款…" autocomplete="off">
+  <div class="search__panel" role="dialog" aria-modal="true" aria-label="站内搜索">
+    <input id="search-input" type="search" placeholder="搜索规则、编号（如 L-003）、条款…" autocomplete="off" aria-label="搜索关键词">
     <div class="search__results" id="search-results"></div>
+    <div class="search__foot"><span><kbd>↑</kbd><kbd>↓</kbd> 选择</span><span><kbd>Enter</kbd> 打开</span><span><kbd>Esc</kbd> 关闭</span></div>
   </div>
 </div>
 
+<script>window.SITE_BASE=${JSON.stringify(base)};</script>
 <script src="${base}assets/search-index.js"></script>
 <script src="${base}assets/site.js"></script>
 ${page.hasMermaid ? `<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
-<script>window.mermaid && mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>` : ''}
+<script>window.mermaid && mermaid.initialize({ startOnLoad: true, theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default' });</script>` : ''}
 </body>
 </html>
 `;
