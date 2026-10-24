@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitepress';
@@ -8,6 +8,8 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REPO_URL = 'https://github.com/MCQingYu-Team/QingYu-docs';
 const BRANCH = 'main';
 const BASE = '/';
+const SITE = 'https://wiki.aqcraft.cn';
+const OG_IMAGE = `${SITE}/og.png`;
 
 /** 源文件路径 → 站点路径：规则/ 前缀去掉，规则/index.md 即首页 */
 const rewrite = (src) => (src === '规则/index.md' ? 'index.md' : src.replace(/^规则\//, ''));
@@ -60,11 +62,62 @@ export default withMermaid(
   defineConfig({
     lang: 'zh-CN',
     title: '清屿服务器文档',
-    description: '清屿服务器官方文档：入服指南、玩家守则、管理员条例、地铁条例、身份与治理条例与处罚细目',
+    description: '清屿服务器官方文档：Java 版与基岩版互通的 Minecraft 生电生存服。新手教程、红石与建筑指南、指令速查、常见问题、玩家守则与处罚细目。',
     base: BASE,
     outDir: 'site',
     lastUpdated: true,
-    sitemap: { hostname: 'https://wiki.aqcraft.cn' },
+    sitemap: { hostname: SITE },
+
+    /** 没写 description 的页面，取正文第一段作为摘要（供搜索引擎与分享卡片使用） */
+    transformPageData(pageData) {
+      if (pageData.frontmatter.description) return;
+      const src = resolve(ROOT, pageData.filePath);
+      if (!existsSync(src)) return;
+      const para = readFileSync(src, 'utf8')
+        .replace(/^---[\s\S]*?\n---\n/, '')
+        .split(/\r?\n/)
+        .map((l) => l.trim())
+        .find((l) => l && !/^(#|\||>|-|\*\s|\d+\.|<|```|---)/.test(l));
+      if (!para) return;
+      const text = para.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/[*`]/g, '').trim();
+      pageData.description = text.length > 120 ? text.slice(0, 118) + '…' : text;
+    },
+
+    /** 每页输出 canonical、Open Graph、Twitter 卡片；首页额外输出 JSON-LD */
+    transformHead({ pageData, siteData }) {
+      const path = pageData.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '.html');
+      const url = encodeURI(`${SITE}/${path}`);
+      const title = pageData.frontmatter.layout === 'home' ? siteData.title : `${pageData.title} | ${siteData.title}`;
+      const desc = pageData.frontmatter.description || pageData.description || siteData.description;
+      const head = [
+        ['link', { rel: 'canonical', href: url }],
+        ['meta', { property: 'og:type', content: pageData.frontmatter.layout === 'home' ? 'website' : 'article' }],
+        ['meta', { property: 'og:site_name', content: siteData.title }],
+        ['meta', { property: 'og:locale', content: 'zh_CN' }],
+        ['meta', { property: 'og:url', content: url }],
+        ['meta', { property: 'og:title', content: title }],
+        ['meta', { property: 'og:description', content: desc }],
+        ['meta', { property: 'og:image', content: OG_IMAGE }],
+        ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+        ['meta', { name: 'twitter:title', content: title }],
+        ['meta', { name: 'twitter:description', content: desc }],
+        ['meta', { name: 'twitter:image', content: OG_IMAGE }],
+      ];
+      if (pageData.frontmatter.layout === 'home') {
+        const ld = {
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: siteData.title,
+          alternateName: ['清屿服务器', 'QingYu Minecraft Server'],
+          url: `${SITE}/`,
+          inLanguage: 'zh-CN',
+          description: desc,
+          publisher: { '@type': 'Organization', name: '清屿运营团队', url: 'https://www.aqcraft.cn', logo: `${SITE}/logo.png` },
+        };
+        head.push(['script', { type: 'application/ld+json' }, JSON.stringify(ld)]);
+      }
+      return head;
+    },
 
     srcExclude: ['README.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md', '.github/**', '规则/404.md'],
     rewrites: {
@@ -76,6 +129,7 @@ export default withMermaid(
       ['link', { rel: 'icon', type: 'image/png', href: `${BASE}logo.png` }],
       ['link', { rel: 'apple-touch-icon', href: `${BASE}logo.png` }],
       ['meta', { name: 'theme-color', content: '#0d9488' }],
+      ['meta', { name: 'keywords', content: '清屿服务器,Minecraft,我的世界,生电服,生存服,基岩版互通,红石,建筑,服务器规则,新手教程' }],
     ],
 
     markdown: {
@@ -89,7 +143,18 @@ export default withMermaid(
 
       nav: [
         { text: '主页', link: '/' },
-        { text: '快速开始', link: link('规则/指南/选择客户端.md'), activeMatch: '^/(指南/|服务器信息)' },
+        { text: '新手', link: link('规则/玩法/新手教程.md'), activeMatch: '^/(指南/|服务器信息|玩法/新手教程)' },
+        {
+          text: '玩法',
+          activeMatch: '^/玩法/(?!新手教程)',
+          items: [
+            { text: '玩法总览', link: link('规则/玩法/玩法总览.md') },
+            { text: '红石指南', link: link('规则/玩法/红石指南.md') },
+            { text: '建筑指南', link: link('规则/玩法/建筑指南.md') },
+            { text: '指令与菜单', link: link('规则/玩法/指令与菜单.md') },
+          ],
+        },
+        { text: '常见问题', link: link('规则/指南/常见问题.md') },
         { text: '规则', link: link('规则/清屿服务器玩家守则.md'), activeMatch: '^/清屿服务器' },
         { text: '处罚', link: link('规则/处罚细目表.md'), activeMatch: '^/处罚细目' },
         { text: '官网', link: 'https://www.aqcraft.cn' },
@@ -97,8 +162,9 @@ export default withMermaid(
 
       sidebar: [
         {
-          text: '快速开始',
+          text: '新手上路',
           items: [
+            { text: '新手教程', link: link('规则/玩法/新手教程.md') },
             { text: '选择客户端', link: link('规则/指南/选择客户端.md') },
             { text: '入服与绑定', link: link('规则/指南/入服与绑定.md') },
             { text: '常见问题', link: link('规则/指南/常见问题.md') },
@@ -106,7 +172,17 @@ export default withMermaid(
           ],
         },
         {
+          text: '玩法指南',
+          items: [
+            { text: '玩法总览', link: link('规则/玩法/玩法总览.md') },
+            { text: '红石指南', link: link('规则/玩法/红石指南.md') },
+            { text: '建筑指南', link: link('规则/玩法/建筑指南.md') },
+            { text: '指令与菜单', link: link('规则/玩法/指令与菜单.md') },
+          ],
+        },
+        {
           text: '规则',
+          collapsed: false,
           items: [
             { text: '玩家守则', link: link('规则/清屿服务器玩家守则.md') },
             { text: '管理员条例', link: link('规则/清屿服务器管理员条例.md') },
@@ -117,6 +193,7 @@ export default withMermaid(
         },
         {
           text: '处罚',
+          collapsed: true,
           items: [
             { text: '处罚细目表', link: link('规则/处罚细目表.md') },
             { text: '01 语言类', link: link('规则/处罚细目/01-语言类.md') },

@@ -18,7 +18,7 @@
 }
 
 /* 首页由 hero 展示标题，正文里的一级标题不再重复 */
-.VPHome .vp-doc > div > h1:first-child {
+.VPHome .vp-doc h1:first-of-type {
   display: none;
 }
 
@@ -30,4 +30,112 @@
 
 .VPNavBarTitle .logo {
   border-radius: 6px;
+}
+
+/* ---------- 首页：三步进服 ---------- */
+.qy-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 0 0 40px;
+}
+.vp-doc a.qy-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 22px 20px 76px;
+  border-radius: 14px;
+  border: 1px solid var(--vp-c-divider);
+  background: linear-gradient(135deg, var(--vp-c-brand-soft), transparent 70%), var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1.6;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.vp-doc a.qy-step strong {
+  color: var(--vp-c-text-1);
+  font-size: 17px;
+}
+.vp-doc a.qy-step:hover {
+  transform: translateY(-3px);
+  border-color: var(--vp-c-brand-2);
+  box-shadow: 0 10px 28px -12px rgba(13, 148, 136, 0.5);
+}
+.qy-step-no {
+  position: absolute;
+  left: 20px;
+  top: 22px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #14b8a6, #3b82f6);
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* ---------- 首页：我想…… ---------- */
+.qy-quick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 16px 0 40px;
+}
+.vp-doc .qy-quick a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.vp-doc .qy-quick a strong {
+  color: var(--vp-c-text-1);
+  font-size: 15px;
+}
+.vp-doc .qy-quick a span {
+  color: var(--vp-c-brand-1);
+  font-size: 13px;
+}
+.vp-doc .qy-quick a span::after {
+  content: ' →';
+}
+.vp-doc .qy-quick a:hover {
+  border-color: var(--vp-c-brand-2);
+  background: var(--vp-c-brand-soft);
+}
+
+.VPFeature .icon {
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+}
+
+@media (max-width: 960px) {
+  .qy-quick { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .qy-steps { grid-template-columns: 1fr; }
+}
+/* 头像原图只有 64px，按像素风放大 */
+.VPHero .image-src {
+  width: 160px;
+  height: 160px;
+  max-width: none;
+  max-height: none;
+  image-rendering: pixelated;
+  border-radius: 24px;
+}
+
+@media (min-width: 960px) {
+  .VPHero .image-src {
+    width: 240px;
+    height: 240px;
+  }
 }

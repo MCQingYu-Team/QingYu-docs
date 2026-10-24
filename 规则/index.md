@@ -1,57 +1,91 @@
 ---
 layout: home
+titleTemplate: Minecraft 生电生存服 · 新手教程与规则文档
+description: 清屿服务器（wiki.aqcraft.cn）官方文档：Java 版与基岩版互通的 Minecraft 生电生存服，提供新手教程、红石与建筑指南、指令速查、常见问题、玩家守则与处罚细目。
 
 hero:
   name: 清屿服务器
-  text: 规则与使用文档
-  tagline: 生存 · 红石 · 建筑 · 地铁 · 赛事，快速上手服务器的规则与玩法
+  text: 一起生存、红石、建筑
+  tagline: Java 版与基岩版互通的 Minecraft 生电服。三步进服，没有付费特权，规则全部公开。
   image:
     src: /logo.png
     alt: 清屿服务器
   actions:
     - theme: brand
-      text: 快速开始
-      link: /指南/选择客户端
+      text: 新手教程
+      link: /玩法/新手教程
     - theme: alt
-      text: 玩家守则
-      link: /清屿服务器玩家守则
+      text: 怎么进服
+      link: /指南/入服与绑定
     - theme: alt
-      text: 处罚细目
-      link: /处罚细目表
+      text: 常见问题
+      link: /指南/常见问题
 
 features:
-  - title: 双端互通
-    details: Java 版与基岩版（Geyser）同一地址加入，同 ID 数据互通
-    link: /指南/选择客户端
-  - title: 即进即绑
-    details: 进服拿绑定码，发到 QQ 群，机器人自动加白名单
-    link: /指南/入服与绑定
-  - title: 规则公开
-    details: 玩家守则、管理员条例、地铁条例全部公开，处罚有据可查
-    link: /清屿服务器玩家守则
-  - title: 七日阳光
-    details: 规则不能偷偷改：任何修订公示 7 日，玩家可提意见与表决
-    link: /清屿服务器七日阳光流程
-  - title: 处罚细目
-    details: 七大类 175 条处罚对照，编号可直接搜索（如 L-003）
+  - title: 新手教程
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v16H6.5A2.5 2.5 0 0 0 4 21.5"/><path d="M8 7h8M8 11h6"/></svg>'
+    details: 第一天做什么、哪些坑别踩，五分钟看懂
+    link: /玩法/新手教程
+  - title: 玩法总览
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>'
+    details: 生存、红石、建筑、地铁、赛事、经济，一页看全
+    link: /玩法/玩法总览
+  - title: 红石指南
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>'
+    details: 刷怪塔、农场、假人怎么用，机器如何不卡服
+    link: /玩法/红石指南
+  - title: 建筑指南
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></svg>'
+    details: 圈领地、和邻居相处、大型工程报备
+    link: /玩法/建筑指南
+  - title: 指令与菜单
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>'
+    details: 按 ESC 打开菜单，传送、点歌、常用指令速查
+    link: /玩法/指令与菜单
+  - title: 规则与处罚
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>'
+    details: 守则公开、处罚有表可查，编号直接搜（如 L-003）
     link: /处罚细目表
-  - title: 玩家共治
-    details: 无等级、单一身份「贡献者」，重大事项由玩家表决
-    link: /清屿服务器玩家身份与治理条例
 ---
-# 清屿服务器规则
 
-**生存 · 红石 · 建筑 · 地铁 · 赛事** —— 一个由玩家共建、长期运营的 Minecraft 社区服务器。本站收录全部官方规则、处罚细目、入服指引与服务器信息。
+# 清屿服务器
 
-> 服务器 QQ 群：**1102137231** ｜ 官网：[www.aqcraft.cn](https://www.aqcraft.cn) ｜ 主服地址：`202.189.10.108:20577`
+<div class="qy-steps">
+  <a class="qy-step" href="/指南/选择客户端">
+    <span class="qy-step-no">1</span>
+    <strong>准备客户端</strong>
+    <span>Java 版 1.20–26.3，或基岩版 26.0–26.45</span>
+  </a>
+  <a class="qy-step" href="/服务器信息">
+    <span class="qy-step-no">2</span>
+    <strong>加群并连接</strong>
+    <span>QQ 群 1102137231 · <code>202.189.10.108:20577</code></span>
+  </a>
+  <a class="qy-step" href="/指南/入服与绑定">
+    <span class="qy-step-no">3</span>
+    <strong>发绑定码</strong>
+    <span>把屏幕上的"绑定 xxxx"发到群里，自动加白</span>
+  </a>
+</div>
 
----
+## 我想……
+
+<div class="qy-quick">
+  <a href="/玩法/新手教程"><strong>刚来，不知道干什么</strong><span>新手教程</span></a>
+  <a href="/玩法/指令与菜单"><strong>回家、传送、点歌</strong><span>指令与菜单</span></a>
+  <a href="/玩法/红石指南"><strong>建刷怪塔、农场</strong><span>红石指南</span></a>
+  <a href="/玩法/建筑指南"><strong>圈地盖房子</strong><span>建筑指南</span></a>
+  <a href="/指南/常见问题"><strong>进不去服、遇到问题</strong><span>常见问题</span></a>
+  <a href="/处罚细目表"><strong>这样做会不会被罚</strong><span>处罚细目表</span></a>
+  <a href="http://202.189.10.108:20851" target="_blank" rel="noopener"><strong>看看世界长什么样</strong><span>网页地图</span></a>
+  <a href="/清屿服务器地铁乘车管理条例"><strong>坐地铁</strong><span>地铁乘车管理条例</span></a>
+</div>
 
 ## 服务器简介
 
-清屿服务器是一个由玩家共同建设、长期运营的 **Minecraft 生存服务器**，以 **生存 · 红石 · 建筑 · 地铁 · 赛事** 五大特色为核心，服务端采用 **Paper**，并同时向 Java 版与基岩版（Geyser）玩家开放。
+清屿服务器是一个由玩家共同建设、长期运营的 **Minecraft 生电生存服**，以 **生存 · 红石 · 建筑 · 地铁 · 赛事** 为核心，服务端采用 **Paper**，Java 版与基岩版（Geyser）玩家在同一个世界。
 
-服务器坚持"规则面前人人平等"，所有规则均经"七日阳光流程"公开修订，保证每一位玩家的知情权与参与权。
+没有等级、没有付费特权，所有玩家都是同一个身份「贡献者」。规则全部公开，任何修订都要经过"七日阳光流程"公示 7 天。
 
 ## 规则体系
 
@@ -100,38 +134,9 @@ features:
 
 ---
 
-## 入服指引
+## 遇到问题
 
-### 第一步：加入群聊
-
-加入官方 QQ 群 **1102137231**，获取最新公告与入服帮助。
-
-### 第二步：阅读规则
-
-完整阅读《玩家守则》与《管理员条例》，确认无异议。规则是你在服务器内一切行为的依据。
-
-### 第三步：尝试进服
-
-直接连接服务器地址进入游戏。进服时服务器会显示一条 **"绑定 xxxx"** 的提示，其中 `xxxx` 是为该玩家自动生成的随机绑定码。
-
-### 第四步：发送绑定码
-
-把绑定码发送到 QQ 群，机器人会校验并自动加入白名单，同时将群昵称变更为你的游戏 ID。
-
----
-
-## 常见问题（FAQ）
-
-| 问题 | 做法 | 时限 / 说明 |
-|------|------|------------|
-| 怎么加白名单 | 进服获取绑定码 → 发到 QQ 群自动绑定 | 即时生效（见玩家守则 5.1.1） |
-| 举报违规 | 通过举报通道提交证据 | 12 小时内启动调查（见管理员条例 第十一条） |
-| 对处罚不服 | 联系值班管理员或提交 Issue 申诉 | 7 日内提出，72 小时内复核（见管理员条例 第十二条） |
-| 被诈骗 / 交易纠纷 | 提交双方 ID、交易内容与证据 | 12 小时受理、72 小时裁决（见玩家守则 10.2.2） |
-| 账号找回 | 提供注册邮箱、历史登录信息、早期建筑坐标 | 核对通过后找回（见玩家守则 12.6.1） |
-| 开店 / 出租 | 联系管理员办理营业执照 | 见玩家守则 7.2.2 |
-| 发现漏洞 | 通过官方渠道提交复现步骤 | 首例重大漏洞奖励 500–5000 游戏币（见玩家守则 2.1.2） |
-| 地铁问题 | 提交线路、坐标与截图 | 24 小时响应、48 小时处理（见地铁条例 4.1.3） |
+进服、绑定、玩法、申诉等高频问题都在[常见问题](指南/常见问题.md)，找不到的到 QQ 群 **1102137231** 问值班管理员。
 
 ---
 
