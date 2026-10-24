@@ -143,7 +143,7 @@ export default withMermaid(
 
       nav: [
         { text: '主页', link: '/' },
-        { text: '新手', link: link('规则/玩法/新手教程.md'), activeMatch: '^/(指南/|服务器信息|玩法/新手教程)' },
+        { text: '新手', link: link('规则/玩法/新手教程.md'), activeMatch: '^/(指南/(?!问题处理进度)|服务器信息|玩法/新手教程)' },
         {
           text: '玩法',
           activeMatch: '^/玩法/(?!新手教程)',
@@ -155,6 +155,7 @@ export default withMermaid(
           ],
         },
         { text: '常见问题', link: link('规则/指南/常见问题.md') },
+        { text: '问题进度', link: link('规则/指南/问题处理进度.md') },
         { text: '规则', link: link('规则/清屿服务器玩家守则.md'), activeMatch: '^/清屿服务器' },
         { text: '处罚', link: link('规则/处罚细目表.md'), activeMatch: '^/处罚细目' },
         { text: '官网', link: 'https://www.aqcraft.cn' },
@@ -168,6 +169,7 @@ export default withMermaid(
             { text: '选择客户端', link: link('规则/指南/选择客户端.md') },
             { text: '入服与绑定', link: link('规则/指南/入服与绑定.md') },
             { text: '常见问题', link: link('规则/指南/常见问题.md') },
+            { text: '问题处理进度', link: link('规则/指南/问题处理进度.md') },
             { text: '服务器信息', link: link('服务器信息.md') },
           ],
         },
@@ -187,6 +189,7 @@ export default withMermaid(
             { text: '玩家守则', link: link('规则/清屿服务器玩家守则.md') },
             { text: '管理员条例', link: link('规则/清屿服务器管理员条例.md') },
             { text: '地铁乘车管理条例', link: link('规则/清屿服务器地铁乘车管理条例.md') },
+          { text: '点歌台管理条例', link: link('规则/清屿服务器点歌台管理条例.md') },
             { text: '玩家身份与治理条例', link: link('规则/清屿服务器玩家身份与治理条例.md') },
             { text: '七日阳光流程', link: link('规则/清屿服务器七日阳光流程.md') },
           ],
