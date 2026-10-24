@@ -38,7 +38,7 @@ jobs:
       - name: 生成静态站
         run: npm run site:build
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
