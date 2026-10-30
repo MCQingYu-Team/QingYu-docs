@@ -40,7 +40,7 @@ features:
     link: /玩法/建筑指南
   - title: 指令与菜单
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>'
-    details: 按 ESC 打开菜单，传送、点歌、常用指令速查
+    details: 按 Shift + F 打开菜单，传送、点歌、常用指令速查
     link: /玩法/指令与菜单
   - title: 规则与处罚
     icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>'
