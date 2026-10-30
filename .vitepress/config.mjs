@@ -158,6 +158,7 @@ export default withMermaid(
         { text: '问题进度', link: link('规则/指南/问题处理进度.md') },
         { text: '规则', link: link('规则/清屿服务器玩家守则.md'), activeMatch: '^/清屿服务器' },
         { text: '处罚', link: link('规则/处罚细目表.md'), activeMatch: '^/处罚细目' },
+        { text: '最近更新', link: link('规则/最近更新.md'), activeMatch: '^/最近更新' },
         { text: '官网', link: 'https://www.aqcraft.cn' },
       ],
 
@@ -206,6 +207,14 @@ export default withMermaid(
             { text: '05 账号类', link: link('规则/处罚细目/05-账号类.md') },
             { text: '06 管理类', link: link('规则/处罚细目/06-管理类.md') },
             { text: '07 群聊社区', link: link('规则/处罚细目/07-群聊社区.md') },
+          ],
+        },
+        {
+          text: '更新记录',
+          collapsed: false,
+          items: [
+            { text: '最近规则更新', link: link('规则/最近更新.md') },
+            { text: '完整变更记录', link: `${REPO_URL}/blob/${BRANCH}/CHANGELOG.md` },
           ],
         },
       ],
