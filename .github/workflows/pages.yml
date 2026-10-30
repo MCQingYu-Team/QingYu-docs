@@ -6,8 +6,10 @@ on:
     paths:
       - "规则/**"
       - "服务器信息.md"
-      - "site-assets/**"
-      - "scripts/build-site.mjs"
+      - ".vitepress/**"
+      - "public/**"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -25,11 +27,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 「最后更新」时间取自 git 历史
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
+      - name: 安装依赖
+        run: npm ci --no-audit --no-fund
       - name: 生成静态站
-        run: node scripts/build-site.mjs
+        run: npm run site:build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
